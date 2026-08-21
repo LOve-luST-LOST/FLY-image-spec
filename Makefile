@@ -85,10 +85,10 @@ check-license: ## check license headers in source files
 lint: lint-go lint-md ## Run all linters
 
 .PHONY: lint-go
-lint-go: .install.lint ## lint check of Go files using golangci-lint
-	@echo "checking Go lint"
-	@GO111MODULE=on $(GOPATH)/bin/golangci-lint run
-	@[ "$$BUILD_SPEC_MODULE_ONLY" = true ] || { cd schema && GO111MODULE=on $(GOPATH)/bin/golangci-lint run; }
+lint-go: ## run various checks on the Go files
+	test -z "$$(go fmt ./...)"
+	go vet ./...
+	[ "$$BUILD_SPEC_MODULE_ONLY" = true ] || ( cd schema && test -z "$$(go fmt ./...)" && go vet ./... )
 
 .PHONY: lint-md
 lint-md: ## Run linting for markdown
@@ -98,7 +98,7 @@ lint-md: ## Run linting for markdown
 .PHONY: test
 test: ## run the unit tests
 	go test -race -cover ./...
-	[ "$$BUILD_SPEC_MODULE_ONLY" = true ] || { cd schema && go test -race -cover ./...; }
+	[ "$$BUILD_SPEC_MODULE_ONLY" = true ] || ( cd schema && go test -race -cover ./... )
 
 img/%.png: img/%.dot ## generate PNG from dot file
 	dot -Tpng $^ > $@
@@ -115,16 +115,6 @@ endif
 
 .PHONY: .install.tools
 install.tools: $(TOOLS:%=.install.%)
-
-.PHONY: .install.lint
-.install.lint:
-	case "$$(go env GOVERSION)" in \
-	go1.18.*)	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.47.3;; \
-	go1.19.*)	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1;; \
-	go1.20.*)	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2;; \
-	go1.21.*)	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.1;; \
-	*) go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest;; \
-	esac
 
 .PHONY: .install.gitvalidation
 .install.gitvalidation:

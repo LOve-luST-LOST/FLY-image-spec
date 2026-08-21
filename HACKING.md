@@ -23,8 +23,7 @@ The following make targets are relevant for any work involving the Go packages.
 
 ### Linting
 
-The included Go source code is being examined for any linting violations not included in the standard Go compiler.
-Linting is done using [golangci-lint][golangci-lint].
+The included Go source code is being examined for any linting violations by the standard Go compiler.
 
 Invocation:
 
@@ -106,6 +105,5 @@ make img/media-types.png
 ```
 
 [docker]: https://www.docker.com/
-[golangci-lint]: https://github.com/golangci/golangci-lint
 [graphviz]: https://www.graphviz.org/
 [jq]: https://stedolan.github.io/jq/
